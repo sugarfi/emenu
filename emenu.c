@@ -107,6 +107,7 @@ int main(int argc, char *argv[]) {
 
     XSetWindowAttributes attrs;
     attrs.override_redirect = 1;
+    attrs.do_not_propagate_mask = attrs.event_mask = KeyPress;
     Window win = XCreateWindow(
             dpy,
             XDefaultRootWindow(dpy),
@@ -115,12 +116,11 @@ int main(int argc, char *argv[]) {
             0,
             win_attrs.depth,
             CopyFromParent, CopyFromParent,
-            CWOverrideRedirect,
+            CWOverrideRedirect | CWDontPropagate | CWEventMask,
             &attrs);
     d("Created window");
-
-    XGrabKeyboard(dpy, DefaultRootWindow(dpy), false, GrabModeAsync, GrabModeAsync, CurrentTime);
     XSelectInput(dpy, win, StructureNotifyMask | KeyPressMask);
+
     XMapWindow(dpy, win);
     d("Sent map request");
 
@@ -155,6 +155,10 @@ int main(int argc, char *argv[]) {
     bool running = true;
     KeySym keysym;
     char buf[25];
+
+    XGrabKeyboard(dpy, DefaultRootWindow(dpy), False, GrabModeAsync, GrabModeAsync, CurrentTime);
+    XSetInputFocus(dpy, win, RevertToParent, CurrentTime);
+    d("Grabbed keyboard");
 
     while(running) {
         XNextEvent(dpy, &ev);
@@ -279,8 +283,9 @@ int main(int argc, char *argv[]) {
             render_items(drw, win, items, matched, pos);
         }
     }
+
+    d("Exiting");
     
-    XUngrabKeyboard(dpy, CurrentTime);
     XFlush(dpy);
     drw_free(drw);
     XDestroyWindow(dpy, win);

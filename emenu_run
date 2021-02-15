@@ -1,2 +1,2 @@
 #!/bin/sh
-./emenu $(./emenu_path) | ${SHELL:-"/bin/sh"} &
+$(dirname $0)/emenu $($(dirname $0)/emenu_path) | ${SHELL:-"/bin/sh"} &
