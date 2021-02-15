@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
     char buf[25];
 
     XGrabKeyboard(dpy, DefaultRootWindow(dpy), False, GrabModeAsync, GrabModeAsync, CurrentTime);
-    XSetInputFocus(dpy, win, RevertToParent, CurrentTime);
+    XSetInputFocus(dpy, win, RevertToPointerRoot, CurrentTime);
     d("Grabbed keyboard");
 
     while(running) {
@@ -244,6 +244,7 @@ int main(int argc, char *argv[]) {
                     }
                     break;
                 }
+            case XK_Shift_L: case XK_Shift_R: break;
             default:
                 {
                     char *old = malloc(len);
