@@ -1,0 +1,10 @@
+#!/bin/sh
+
+files=""
+
+for dir in $(echo $PATH | sed 's/:/ /g')
+do
+    files="$files $(ls $dir)"
+done 
+
+echo $files
